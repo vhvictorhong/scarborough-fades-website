@@ -26,8 +26,8 @@
     },
     "aggregateRating": {
       "@type": "AggregateRating",
-      "ratingValue": "4.9",
-      "reviewCount": "312"
+      "ratingValue": "4.7",
+      "reviewCount": "718"
     },
     "openingHoursSpecification": [
       {
@@ -793,10 +793,10 @@
   <!-- Trust strip -->
   <div class="trust" role="complementary" aria-label="Business highlights">
     <div class="trust-item">
-      <span class="trust-stars" aria-hidden="true">★★★★★</span>
+      <span class="trust-stars" id="review-stars" aria-hidden="true">★★★★★</span>
       <div>
-        <div class="trust-val">4.9</div>
-        <div class="trust-lbl">312 Google reviews</div>
+        <div class="trust-val" id="review-rating">4.7</div>
+        <div class="trust-lbl" id="review-count">718 Google reviews</div>
       </div>
     </div>
     <div class="trust-item">
@@ -1055,6 +1055,33 @@
   </a>
 
   <script>
+    // ── Live Google rating (Places API) ──
+    // Fill these in: create a key at console.cloud.google.com with "Places API (New)"
+    // enabled and restricted (HTTP referrer) to this site's domain, then find the
+    // Place ID at https://developers.google.com/maps/documentation/places/web-service/place-id
+    const GOOGLE_PLACES_API_KEY = '';
+    const GOOGLE_PLACE_ID = '';
+
+    (async function loadGoogleRating() {
+      if (!GOOGLE_PLACES_API_KEY || !GOOGLE_PLACE_ID) return;
+      try {
+        const res = await fetch(
+          `https://places.googleapis.com/v1/places/${GOOGLE_PLACE_ID}?fields=rating,userRatingCount&key=${GOOGLE_PLACES_API_KEY}`
+        );
+        if (!res.ok) return;
+        const { rating, userRatingCount } = await res.json();
+        if (typeof rating !== 'number' || typeof userRatingCount !== 'number') return;
+
+        document.getElementById('review-rating').textContent = rating.toFixed(1);
+        document.getElementById('review-count').textContent = `${userRatingCount} Google reviews`;
+
+        const full = Math.round(rating);
+        document.getElementById('review-stars').textContent = '★★★★★'.slice(0, full).padEnd(5, '☆');
+      } catch (err) {
+        // Network/API failure — keep the static fallback already in the markup.
+      }
+    })();
+
     // ── Hours config — single source of truth (matches schema above) ──
     const HOURS = {
       0: { open: 10, close: 18 }, // Sun
