@@ -284,12 +284,57 @@
       font-size: clamp(4.5rem, 9vw, 8rem);
       line-height: 0.88;
       text-transform: uppercase;
-      color: var(--light);
       margin-bottom: 1.75rem;
     }
-    .hero-title em {
+
+    .title-stack { display: grid; }
+    .title-ghost,
+    .title-reveal { grid-area: 1 / 1; }
+    .title-ghost { color: rgba(243,241,236,0.07); }
+    .title-reveal {
+      color: var(--light);
+      clip-path: inset(0 100% 0 0);
+      animation: title-wipe 6.5s ease-in-out infinite;
+    }
+    .title-reveal em {
       font-style: italic;
       color: var(--accent);
+    }
+    @keyframes title-wipe {
+      0%   { clip-path: inset(0 100% 0 0); }
+      32%  { clip-path: inset(0 0 0 0); }
+      90%  { clip-path: inset(0 0 0 0); }
+      100% { clip-path: inset(0 0 0 100%); }
+    }
+
+    .accent-wrap { position: relative; display: inline-block; }
+    .snip-line {
+      position: absolute;
+      left: 0; bottom: 0.06em;
+      height: 0.045em; width: 0;
+      background: var(--accent);
+      animation: snip-draw 6.5s ease-in-out infinite;
+    }
+    @keyframes snip-draw {
+      0%, 40% { width: 0; }
+      66%     { width: 100%; }
+      90%     { width: 100%; }
+      100%    { width: 0; }
+    }
+    .snip-icon {
+      position: absolute;
+      bottom: 0.02em;
+      width: 0.26em; height: 0.26em;
+      color: var(--light);
+      opacity: 0;
+      animation: snip-travel 6.5s ease-in-out infinite;
+    }
+    @keyframes snip-travel {
+      0%, 40% { left: -6%;  opacity: 0; }
+      46%     { opacity: 1; }
+      66%     { left: 97%;  opacity: 1; }
+      74%     { opacity: 0; }
+      100%    { left: -6%;  opacity: 0; }
     }
 
     .hero-sub {
@@ -750,6 +795,9 @@
       .status-dot { animation: none; }
       .gallery-item img,
       .svc::after { transition: none; }
+      .title-reveal { clip-path: inset(0 0 0 0); animation: none; }
+      .snip-line { width: 100%; animation: none; }
+      .snip-icon { display: none; }
     }
 
     :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -821,7 +869,12 @@
 
     <div class="hero-content">
       <p class="eyebrow">Scarborough's own · Est. 2018</p>
-      <h1 class="hero-title">Elevate<br><em>your</em><br>look.</h1>
+      <h1 class="hero-title">
+        <span class="title-stack">
+          <span class="title-ghost" aria-hidden="true">Elevate<br>your<br>look.</span>
+          <span class="title-reveal">Elevate<br><span class="accent-wrap"><em>your</em><span class="snip-line" aria-hidden="true"></span><svg class="snip-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="6" cy="6" r="2.6"/><circle cx="6" cy="18" r="2.6"/><path d="M8 8l12 12M8 16 20 4"/></svg></span><br>look.</span>
+        </span>
+      </h1>
       <p class="hero-sub">Expert fades, clean lineups, precision beard work. Walk in or book ahead — either way, you leave sharper.</p>
       <a href="https://getsquire.com/booking/book/scarborough-fades-scarborough" class="btn btn-red" target="_blank" rel="noopener noreferrer">Book online →</a>
     </div>
